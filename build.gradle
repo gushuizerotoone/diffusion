@@ -1,0 +1,69 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+}
+
+plugins {
+    id 'org.springframework.boot' version '1.5.6.RELEASE'
+    id 'java'
+    id 'idea'
+}
+
+version '1.0.0'
+group 'diffusion'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'java'
+
+dependencyManagement {
+    dependencies {
+        dependency 'mysql:mysql-connector-java:6.0.5'
+    }
+    imports {
+        mavenBom 'io.spring.platform:platform-bom:Brussels-SR4'
+    }
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": project.name,
+                "Implementation-Version": project.version
+        )
+    }
+}
+
+bootRun {
+    systemProperties System.properties
+    jvmArgs "-Xmx8192m"
+}
+
+bootRepackage {
+    executable = true
+    excludeDevtools = true
+}
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = file("$buildDir/classes/main/")
+    }
+}
+
+wrapper {
+    description 'creates gradle wrapper in order to execute ./gradlew <task>'
+    gradleVersion = '3.5.1'
+}
+
+archivesBaseName = group + '-' + name
