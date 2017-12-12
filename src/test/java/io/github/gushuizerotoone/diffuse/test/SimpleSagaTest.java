@@ -3,10 +3,13 @@ package io.github.gushuizerotoone.diffuse.test;
 import io.github.gushuizerotoone.diffuse.core.Saga;
 import io.github.gushuizerotoone.diffuse.core.SagaContext;
 import io.github.gushuizerotoone.diffuse.core.SagaDefinitionService;
+import io.github.gushuizerotoone.diffuse.core.SagaStatus;
 import io.github.gushuizerotoone.diffuse.impl.AbstractStep;
 import io.github.gushuizerotoone.diffuse.impl.DefaultSagaDefinition;
 import io.github.gushuizerotoone.diffuse.impl.SagaCreator;
 import io.github.gushuizerotoone.diffuse.impl.SimpleSagaContext;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class SimpleSagaTest {
 
@@ -50,9 +53,12 @@ public class SimpleSagaTest {
     definitionService.register(def);
   }
 
+  @Test
   public void testMain() {
     SimpleSagaContext context = new SimpleSagaContext();
-    Saga saga = creator.createSaga("OrderFlow", context, "O_300");
+    Saga<SimpleSagaContext> saga = creator.createSaga("OrderFlow", context, "O_300");
     saga.start();
+    Assert.assertEquals(saga.getStatus(), SagaStatus.COMPLETED);
+    Assert.assertEquals(saga.getCurrentContext().getValueMap().get("ShipmentId"), "200-300");
   }
 }

@@ -28,14 +28,6 @@ public class SagaImpl<CT extends SagaContext> implements Saga<CT> {
     this.defName = defName;
   }
 
-  public SagaContext getContext() {
-    return context;
-  }
-
-  public void setContext(SagaContext context) {
-    this.context = context;
-  }
-
   public String getId() {
     return id;
   }
@@ -52,8 +44,14 @@ public class SagaImpl<CT extends SagaContext> implements Saga<CT> {
     this.outerId = outerId;
   }
 
+  @Override
   public SagaStatus getStatus() {
     return status;
+  }
+
+  @Override
+  public CT getCurrentContext() {
+    return (CT) getContext();
   }
 
   public void setStatus(SagaStatus status) {
@@ -79,5 +77,13 @@ public class SagaImpl<CT extends SagaContext> implements Saga<CT> {
   @Override
   public void start() {
 
+  }
+
+  public SagaContext getContext() {
+    return context;
+  }
+
+  public void setContext(SagaContext context) {
+    this.context = context;
   }
 }

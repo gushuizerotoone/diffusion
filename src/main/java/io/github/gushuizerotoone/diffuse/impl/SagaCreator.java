@@ -14,7 +14,7 @@ public class SagaCreator {
   private SagaDefinitionService definitionService;
   private SagaRepo sagaRepo;
 
-  public <T> Saga createSaga(String defName, SagaContext sagaContext, String outerId) {
+  public <CT extends SagaContext> Saga<CT> createSaga(String defName, CT sagaContext, String outerId) {
     Optional<SagaDefinition> optSagaDef = definitionService.getSagaDefinition(defName);
     SagaDefinition def = optSagaDef.orElseThrow(IllegalStateException::new);
     SagaImpl saga = new SagaImpl();
