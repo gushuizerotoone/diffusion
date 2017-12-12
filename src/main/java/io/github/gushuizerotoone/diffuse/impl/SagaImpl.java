@@ -3,7 +3,7 @@ package io.github.gushuizerotoone.diffuse.impl;
 import io.github.gushuizerotoone.diffuse.core.Saga;
 import io.github.gushuizerotoone.diffuse.core.SagaContext;
 import io.github.gushuizerotoone.diffuse.core.SagaStatus;
-import io.github.gushuizerotoone.diffuse.core.SagaStepStatus;
+import io.github.gushuizerotoone.diffuse.core.SagaStepState;
 
 import java.util.Date;
 
@@ -12,13 +12,13 @@ public class SagaImpl<CT extends SagaContext> implements Saga<CT> {
   private String id;
 
   private String defName;
-  private String outerId;
+  private String outerId; // idempotency key
   private SagaContext context;
 
   private SagaStatus status;
   private String step;
   private Date nextTimeout;
-  private SagaStepStatus stepStatus;
+  private SagaStepState stepStatus;
 
   public String getDefName() {
     return defName;
@@ -75,8 +75,8 @@ public class SagaImpl<CT extends SagaContext> implements Saga<CT> {
   }
 
   @Override
-  public void start() {
-
+  public SagaStatus start() {
+    return getStatus();
   }
 
   public SagaContext getContext() {

@@ -1,7 +1,6 @@
 package io.github.gushuizerotoone.diffuse.test;
 
 import io.github.gushuizerotoone.diffuse.core.Saga;
-import io.github.gushuizerotoone.diffuse.core.SagaContext;
 import io.github.gushuizerotoone.diffuse.core.SagaDefinitionService;
 import io.github.gushuizerotoone.diffuse.core.SagaStatus;
 import io.github.gushuizerotoone.diffuse.impl.AbstractStep;
@@ -16,7 +15,7 @@ public class SimpleSagaTest {
   private SagaCreator creator;
   private SagaDefinitionService definitionService;
 
-  private static void sleepMillis(long millis) {
+  private static void dummyOp(long millis) {
     try {
       Thread.sleep(millis);
     } catch (InterruptedException e) {
@@ -30,24 +29,24 @@ public class SimpleSagaTest {
     def.addStep(new AbstractStep<SimpleSagaContext>("Money") {
       @Override
       public void act(SimpleSagaContext context) {
-        sleepMillis(100);
+        dummyOp(100);
         context.getValueMap().put("MoneyId", 200);
       }
       @Override
       public void compensate(SimpleSagaContext context) {
-        sleepMillis(100);
+        dummyOp(100);
       }
     });
     def.addStep(new AbstractStep<SimpleSagaContext>("Shipment") {
       @Override
       public void act(SimpleSagaContext context) {
-        sleepMillis(100);
+        dummyOp(100);
         String shipmentId = context.getValueMap().get("MoneyId").toString() + "-300";
         context.getValueMap().put("ShipmentId", shipmentId);
       }
       @Override
       public void compensate(SimpleSagaContext context) {
-        sleepMillis(100);
+        dummyOp(100);
       }
     });
     definitionService.register(def);
