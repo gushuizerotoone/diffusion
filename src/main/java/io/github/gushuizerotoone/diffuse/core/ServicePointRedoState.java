@@ -2,6 +2,7 @@ package io.github.gushuizerotoone.diffuse.core;
 
 public enum ServicePointRedoState {
   NONE,
-  RETRYABLE,
-  COMPENSABLE,
+  ONLY_RETRYABLE,
+  ONLY_COMPENSABLE,
+  ALL,
 }

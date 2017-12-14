@@ -18,7 +18,8 @@ public class Saga implements Redoable<SagaContext> {
     this.sagaContext = sagaContext;
   }
 
-  public Saga addServicePoint(ServicePoint servicePoint) {
+  public Saga addService(ServiceAdaptor serviceAdaptor) {
+    ServicePoint servicePoint = new CompositeServicePoint(sagaContext, serviceAdaptor);
     if (firstServicePoint == null) {
       firstServicePoint = servicePoint;
       lastServicePoint = servicePoint;
@@ -26,16 +27,24 @@ public class Saga implements Redoable<SagaContext> {
 
     lastServicePoint.setNext(servicePoint);
     lastServicePoint = servicePoint;
+
+    sagaContext.appendServiceName(serviceAdaptor.getName());
     return this;
   }
 
   public Saga redoPolicy(RedoPolicy redoPolicy) {
     this.redoPolicy = redoPolicy;
+    sagaContext.fillRedoPolicy(redoPolicy);
     return this;
   }
 
-  public SagaContext process() {
-    return firstServicePoint.normalProcess();
+  public Saga process() {
+    firstServicePoint.normalProcess();
+    return this;
+  }
+
+  public SagaContext getSagaContext() {
+    return sagaContext;
   }
 
   @Override
