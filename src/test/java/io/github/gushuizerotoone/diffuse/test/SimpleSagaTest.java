@@ -1,7 +1,6 @@
 package io.github.gushuizerotoone.diffuse.test;
 
 import io.github.gushuizerotoone.diffuse.core.RetryAlwaysPolicy;
-import io.github.gushuizerotoone.diffuse.core.Saga;
 import io.github.gushuizerotoone.diffuse.core.SagaBuilder;
 import io.github.gushuizerotoone.diffuse.core.SagaContext;
 import io.github.gushuizerotoone.diffuse.core.SagaStatus;
@@ -23,6 +22,6 @@ public class SimpleSagaTest {
     System.out.println(sagaContext);
 
     Assert.assertEquals(SagaStatus.COMPLETED, sagaStatus);
-    Assert.assertEquals("SUCCESS", sagaContext.getServiceResponseValue(OrderServiceAdaptor.class.getSimpleName(), "status").get());
+    Assert.assertEquals("SUCCESS", sagaContext.getServiceStateValue(OrderServiceAdaptor.class.getSimpleName(), "status").get());
   }
 }

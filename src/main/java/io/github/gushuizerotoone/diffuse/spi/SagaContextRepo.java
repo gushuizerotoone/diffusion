@@ -6,6 +6,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface SagaContextRepo {
-  void saveSaga(SagaContext sagaContext);
+  void saveSagaContext(SagaContext sagaContext);
   Optional<List<SagaContext>> getTimeoutSagaContext(long timeout);
 }

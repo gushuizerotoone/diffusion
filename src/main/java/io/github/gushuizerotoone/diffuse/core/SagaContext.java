@@ -48,7 +48,7 @@ public class SagaContext {
     serviceStates.put(serviceName, old);
   }
 
-  public Optional<String> getServiceResponseValue(String serviceName, String key) {
+  public Optional<String> getServiceStateValue(String serviceName, String key) {
     Object value = serviceStates.get(serviceName).getContent().get(key);
     return Optional.ofNullable(value.toString());
   }
