@@ -5,7 +5,7 @@ import java.util.List;
 public class RetryFirstPolicy implements RedoPolicy {
 
   @Override
-  public Strategy getStrategy(List<ServicePointRedoState> redoStates) {
+  public Strategy getStrategy(List<ServicePointRedoStatus> redoStates) {
     // TODO: thomas, retry first, compensate last
     return new CompensateStrategy();
   }

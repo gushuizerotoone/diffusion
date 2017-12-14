@@ -1,6 +1,5 @@
 package io.github.gushuizerotoone.diffuse.core;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class CompositeServicePoint implements ServicePoint {
@@ -38,8 +37,8 @@ public class CompositeServicePoint implements ServicePoint {
 
   @Override
   public SagaContext normalProcess() {
-    ServiceResponse serviceResponse = serviceAdaptor.normalProcess(sagaContext);
-    sagaContext.fill(getName(), serviceResponse);
+    ServicePointState servicePointState = serviceAdaptor.normalProcess(sagaContext);
+    sagaContext.fill(getName(), servicePointState);
 
     if (!isLeaf()) {
       nextServicePoint.normalProcess();
@@ -53,13 +52,13 @@ public class CompositeServicePoint implements ServicePoint {
       nextServicePoint.compensate();
     }
 
-    ServiceResponse serviceResponse = serviceAdaptor.compensate(sagaContext);
-    sagaContext.fill(getName(), serviceResponse);
+    ServicePointState servicePointState = serviceAdaptor.compensate(sagaContext);
+    sagaContext.fill(getName(), servicePointState);
     return sagaContext;
   }
 
   @Override
-  public void fillRedoStates(List<ServicePointRedoState> redoStates) {
+  public void fillRedoStates(List<ServicePointRedoStatus> redoStates) {
     redoStates.add(serviceAdaptor.getRedoState(sagaContext));
     if (!isLeaf()) {
       nextServicePoint.fillRedoStates(redoStates);
@@ -67,7 +66,7 @@ public class CompositeServicePoint implements ServicePoint {
   }
 
   @Override
-  public ServicePointState getState() {
+  public ServicePointStatus getState() {
     return serviceAdaptor.getState(sagaContext);
   }
 }

@@ -16,7 +16,7 @@ public interface ServicePoint {
 
   SagaContext compensate();
 
-  void fillRedoStates(List<ServicePointRedoState> redoStates);
+  void fillRedoStates(List<ServicePointRedoStatus> redoStates);
 
-  ServicePointState getState();
+  ServicePointStatus getState();
 }

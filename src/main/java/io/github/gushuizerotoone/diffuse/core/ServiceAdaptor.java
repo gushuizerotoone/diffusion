@@ -5,13 +5,13 @@ public interface ServiceAdaptor {
     return this.getClass().getSimpleName();
   }
 
-  default ServicePointRedoState getRedoState(final SagaContext sagaContext) {
-    return ServicePointRedoState.ALL;
+  default ServicePointRedoStatus getRedoState(final SagaContext sagaContext) {
+    return ServicePointRedoStatus.ALL;
   }
 
-  ServiceResponse normalProcess(final SagaContext sagaContext);
+  ServicePointState normalProcess(final SagaContext sagaContext);
 
-  ServiceResponse compensate(final SagaContext sagaContext);
+  ServicePointState compensate(final SagaContext sagaContext);
 
-  ServicePointState getState(final SagaContext sagaContext);
+  ServicePointStatus getState(final SagaContext sagaContext);
 }
