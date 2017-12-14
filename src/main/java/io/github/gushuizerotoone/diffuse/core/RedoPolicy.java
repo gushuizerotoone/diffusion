@@ -1,5 +1,7 @@
 package io.github.gushuizerotoone.diffuse.core;
 
+import java.util.List;
+
 public interface RedoPolicy {
-  boolean test(ServicePointRedoState[] redoStates);
+  Strategy getStrategy(List<ServicePointRedoState> redoStates);
 }

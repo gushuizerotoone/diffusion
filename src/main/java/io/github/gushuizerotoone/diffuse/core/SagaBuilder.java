@@ -1,11 +1,13 @@
 package io.github.gushuizerotoone.diffuse.core;
 
-public interface SagaBuilder {
+public class SagaBuilder {
 
-  Saga addServicePoint();
+  public Saga saga(SagaContext sagaContext) {
+    return new Saga(sagaContext);
+  }
 
-  Saga statePolicy();
-
-  Saga rebuild();
+  Saga rebuild(SagaContext sagaContext) {
+    return null;
+  }
 
 }

@@ -1,6 +1,6 @@
 package io.github.gushuizerotoone.diffuse.core;
 
-public interface Compensable<T> {
+public interface Redoable<T> {
 
-  T compensate();
+  T redo();
 }

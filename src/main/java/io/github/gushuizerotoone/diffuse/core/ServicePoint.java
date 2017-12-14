@@ -8,9 +8,15 @@ public interface ServicePoint {
 
   boolean isLeaf();
 
-  Saga normalProcess(Saga saga);
+  ServicePoint getNext();
 
-  Saga compensate(Saga saga);
+  void setNext(ServicePoint servicePoint);
 
-  void fillRedoStates(Saga saga, List<ServicePointRedoState> redoStates);
+  SagaContext normalProcess();
+
+  SagaContext compensate();
+
+  void fillRedoStates(List<ServicePointRedoState> redoStates);
+
+  ServicePointState getState();
 }

@@ -1,7 +1,8 @@
 buildscript {
     repositories {
-        mavenCentral()
-        jcenter()
+//        mavenCentral()
+//        jcenter()
+        maven { url 'http://nexus.dianrong.com/nexus/content/groups/public/' }
     }
 }
 
@@ -15,8 +16,9 @@ version '1.0.0'
 group 'diffusion'
 
 repositories {
-    mavenCentral()
-    jcenter()
+//    mavenCentral()
+//    jcenter()
+    maven { url 'http://nexus.dianrong.com/nexus/content/groups/public/' }
 }
 
 // apply plugin: 'idea'
