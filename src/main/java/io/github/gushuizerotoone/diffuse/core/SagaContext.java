@@ -27,11 +27,11 @@ public class SagaContext {
     lastModifyDate = new Date();
   }
 
-  public void appendServiceName(String name) {
-    ServicePointState state = new ServicePointState(ServicePointStatus.PREPARE_PROCESS, name);
+  public void appendService(Class<? extends ServiceAdaptor> serviceAdaptorClass) {
+    ServicePointState state = new ServicePointState(serviceAdaptorClass);
     state.setOrder(++order);
 
-    serviceStates.put(name, state);
+    serviceStates.put(serviceAdaptorClass.getSimpleName(), state);
   }
 
   public void fillBase(Map<String, Object> elements) {
@@ -43,7 +43,11 @@ public class SagaContext {
   }
 
   public void fillRedoPolicy(final RedoPolicy redoPolicy) {
-    sagaBaseMap.put(REDO_POLICY, redoPolicy.getClass().getSimpleName());
+    sagaBaseMap.put(REDO_POLICY, redoPolicy.getClass().getName());
+  }
+
+  public String getRedoPolicyClassName() {
+    return (String)sagaBaseMap.get(REDO_POLICY);
   }
 
   public void setServiceState(String serviceName, ServicePointState state) {

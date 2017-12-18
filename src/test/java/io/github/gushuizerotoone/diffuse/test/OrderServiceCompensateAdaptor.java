@@ -2,13 +2,13 @@ package io.github.gushuizerotoone.diffuse.test;
 
 import io.github.gushuizerotoone.diffuse.core.SagaContext;
 import io.github.gushuizerotoone.diffuse.core.ServiceAdaptor;
-import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointStatus;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointState;
+import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointStatus;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class OrderServiceAdaptor implements ServiceAdaptor {
+public class OrderServiceCompensateAdaptor implements ServiceAdaptor {
 
   @Override
   public ServicePointState normalProcess(SagaContext sagaContext) {
@@ -17,7 +17,7 @@ public class OrderServiceAdaptor implements ServiceAdaptor {
     map.put("status", "SUCCESS");
 
     ServicePointState serviceState = sagaContext.getServiceState(getName());
-    serviceState.getCurrentStatus().toCompleted();
+    serviceState.getCurrentStatus().toPrepareCompensate(); // PrepareCompensate
     serviceState.fillContent(map);
     return serviceState;
   }

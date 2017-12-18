@@ -17,6 +17,11 @@ public class InMemorySagaContextRepo implements SagaContextRepo {
   }
 
   @Override
+  public SagaContext getSagaContext(String sagaId) {
+    return sagaContextMap.get(sagaId);
+  }
+
+  @Override
   public List<SagaContext> getTimeoutSagaContext(long timeoutSeconds) {
     return sagaContextMap.values()
             .stream()

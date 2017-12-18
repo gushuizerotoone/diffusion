@@ -8,9 +8,6 @@ import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointState;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Thomas on 2017/12/14.
- */
 public class WalletServiceAdaptor implements ServiceAdaptor {
 
   @Override

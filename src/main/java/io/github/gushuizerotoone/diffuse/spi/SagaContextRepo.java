@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface SagaContextRepo {
   void saveSagaContext(SagaContext sagaContext);
+  SagaContext getSagaContext(String sagaId);
   List<SagaContext> getTimeoutSagaContext(long timeoutSeconds);
 }

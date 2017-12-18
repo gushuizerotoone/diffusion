@@ -1,5 +1,7 @@
 package io.github.gushuizerotoone.diffuse.core.servicepoint;
 
+import io.github.gushuizerotoone.diffuse.core.ServiceAdaptor;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +21,7 @@ public class ServicePointState {
 
   private ServicePointStatusHolder currentStatus;
 
-  public ServicePointState(ServicePointStatus status, String name) {
+  public ServicePointState(Class<? extends ServiceAdaptor> serviceAdaptorClass) {
     prepareProcessStatus = new PrepareProcessStatus(this);
     processingStatus = new ProcessingStatus(this);
     compensatedStatus = new CompletedStatus(this);
@@ -30,7 +32,7 @@ public class ServicePointState {
 
     this.currentStatus = prepareProcessStatus; // init
 
-    this.name = name;
+    this.name = serviceAdaptorClass.getName();
     this.date = new Date();
     this.content = new HashMap<>();
   }
