@@ -9,7 +9,7 @@ public class SagaContext {
   private String name;
   private Map<String, Object> sagaBaseMap;
   private Map<String, ServicePointState> serviceStates;
-  private int index = 0;
+  private int order = 0;
 
   private static final String REDO_POLICY = "_Redo_Policy";
 
@@ -22,7 +22,7 @@ public class SagaContext {
 
   public void appendServiceName(String name) {
     ServicePointState state = new ServicePointState(ServicePointStatus.INIT, name);
-    state.setIndex(++index);
+    state.setOrder(++order);
 
     serviceStates.put(name, state);
   }
@@ -85,12 +85,12 @@ public class SagaContext {
     this.serviceStates = serviceStates;
   }
 
-  public int getIndex() {
-    return index;
+  public int getOrder() {
+    return order;
   }
 
-  public void setIndex(int index) {
-    this.index = index;
+  public void setOrder(int order) {
+    this.order = order;
   }
 
   @Override

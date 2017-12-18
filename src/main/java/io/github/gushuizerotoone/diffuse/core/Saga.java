@@ -15,30 +15,8 @@ public class Saga implements Redoable<SagaContext> {
 
   private ServicePoint firstServicePoint;
 
-  private ServicePoint lastServicePoint;
-
   public Saga(SagaContext sagaContext) {
     this.sagaContext = sagaContext;
-  }
-
-  public Saga addService(ServiceAdaptor serviceAdaptor) {
-    ServicePoint servicePoint = new CompositeServicePoint(sagaContext, serviceAdaptor);
-    if (firstServicePoint == null) {
-      firstServicePoint = servicePoint;
-      lastServicePoint = servicePoint;
-    }
-
-    lastServicePoint.setNext(servicePoint);
-    lastServicePoint = servicePoint;
-
-    sagaContext.appendServiceName(serviceAdaptor.getName());
-    return this;
-  }
-
-  public Saga redoPolicy(RedoPolicy redoPolicy) {
-    this.redoPolicy = redoPolicy;
-    sagaContext.fillRedoPolicy(redoPolicy);
-    return this;
   }
 
   public SagaStatus process() {
@@ -49,6 +27,7 @@ public class Saga implements Redoable<SagaContext> {
   public SagaContext getSagaContext() {
     return sagaContext;
   }
+
   private SagaStatus status(SagaContext sagaContext) {
     // TODO: prepare to implement another way, map-reduce
     Map<String, ServicePointState> serviceStates = sagaContext.getServiceStates();
@@ -82,18 +61,34 @@ public class Saga implements Redoable<SagaContext> {
 
   @Override
   public SagaContext redo() {
-    Objects.requireNonNull(redoPolicy, "can not find redoPolicy: " + toShortString());
+    Objects.requireNonNull(redoPolicy, "Can not find redoPolicy: " + toShortString());
 
     List<ServicePointRedoStatus> redoStates = new ArrayList<>();
     firstServicePoint.fillRedoStates(redoStates);
 
     Strategy strategy = redoPolicy.getStrategy(redoStates);
     if (redoPolicy.getStrategy(redoStates) == null) {
-      throw new RuntimeException("can not redo saga: " + toShortString());
+      throw new RuntimeException("Can not redo sagaContext: " + toShortString());
     }
 
     strategy.forward(firstServicePoint);
     return sagaContext;
+  }
+
+  public ServicePoint getFirstServicePoint() {
+    return firstServicePoint;
+  }
+
+  public void setFirstServicePoint(ServicePoint firstServicePoint) {
+    this.firstServicePoint = firstServicePoint;
+  }
+
+  public RedoPolicy getRedoPolicy() {
+    return redoPolicy;
+  }
+
+  public void setRedoPolicy(RedoPolicy redoPolicy) {
+    this.redoPolicy = redoPolicy;
   }
 
   public String toShortString() {

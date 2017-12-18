@@ -7,7 +7,7 @@ import java.util.Map;
 public class ServicePointState {
   private String name;
   private ServicePointStatus status;
-  private Integer index;
+  private Integer order;
   private Date date;
   private Map<String, Object> content;
 
@@ -25,12 +25,12 @@ public class ServicePointState {
     this.content = new HashMap<>();
   }
 
-  public Integer getIndex() {
-    return index;
+  public Integer getOrder() {
+    return order;
   }
 
-  public void setIndex(Integer index) {
-    this.index = index;
+  public void setOrder(Integer order) {
+    this.order = order;
   }
 
   public Map<String, Object> getContent() {
@@ -70,7 +70,7 @@ public class ServicePointState {
     final StringBuffer sb = new StringBuffer("{");
     sb.append("name='").append(name).append('\'');
     sb.append(", status=").append(status);
-    sb.append(", index=").append(index);
+    sb.append(", order=").append(order);
 //    sb.append(", date=").append(date); // TODO
     sb.append(", content=").append(content);
     sb.append('}');
