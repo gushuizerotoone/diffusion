@@ -19,7 +19,10 @@ public class OrderServiceAdaptor implements ServiceAdaptor {
     map.put("orderId", "Test-OrderId-1");
     map.put("status", "SUCCESS");
 
-    return new ServicePointState(ServicePointStatus.COMPLETED, getName(), map);
+    ServicePointState serviceState = sagaContext.getServiceState(getName());
+    serviceState.getCurrentStatus().toCompleted();
+    serviceState.fillContent(map);
+    return serviceState;
   }
 
   @Override
@@ -28,7 +31,10 @@ public class OrderServiceAdaptor implements ServiceAdaptor {
     map.put("orderId", "Test-OrderId-1");
     map.put("status", "SUCCESS");
 
-    return new ServicePointState(ServicePointStatus.COMPLETED, getName(), map);
+    ServicePointState serviceState = sagaContext.getServiceState(getName());
+    serviceState.getCurrentStatus().toCompensated();
+    serviceState.fillContent(map);
+    return serviceState;
   }
 
   @Override

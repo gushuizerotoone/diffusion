@@ -45,7 +45,9 @@ public class CompositeServicePoint implements ServicePoint {
 
   @Override
   public SagaContext normalProcess() {
-    saveStatus(ServicePointStatus.PROCESSING);
+    ServicePointState state = sagaContext.getServiceState(getName());
+    state.getCurrentStatus().toProcessing();
+    sagaContextRepo.saveSagaContext(sagaContext);
 
     ServicePointState servicePointState = serviceAdaptor.normalProcess(sagaContext);
     sagaContext.fill(getName(), servicePointState);
@@ -59,11 +61,6 @@ public class CompositeServicePoint implements ServicePoint {
     return sagaContext;
   }
 
-  private void saveStatus(ServicePointStatus status) {
-    ServicePointState state = sagaContext.getServiceState(getName());
-    state.setStatus(status); // TODO, invoke the state func.
-    sagaContextRepo.saveSagaContext(sagaContext);
-  }
 
   @Override
   public SagaContext compensate() {
@@ -75,7 +72,9 @@ public class CompositeServicePoint implements ServicePoint {
       }
     }
 
-    saveStatus(ServicePointStatus.COMPENSATING);
+    ServicePointState state = sagaContext.getServiceState(getName());
+    state.getCurrentStatus().toCompensating();
+    sagaContextRepo.saveSagaContext(sagaContext);
 
     ServicePointState servicePointState = serviceAdaptor.compensate(sagaContext);
     sagaContext.fill(getName(), servicePointState);

@@ -6,23 +6,40 @@ import java.util.Map;
 
 public class ServicePointState {
   private String name;
-  private ServicePointStatus status;
   private Integer order;
   private Date date;
   private Map<String, Object> content;
 
-  public ServicePointState(ServicePointStatus status, String name, Map<String, Object> content) {
-    this.status = status;
-    this.date = new Date();
-    this.name = name;
-    this.content = content;
-  }
+  private ServicePointStatusHolder prepareProcessStatus;
+  private ServicePointStatusHolder processingStatus;
+  private ServicePointStatusHolder completedStatus;
+  private ServicePointStatusHolder prepareCompensateStatus;
+  private ServicePointStatusHolder compensatingStatus;
+  private ServicePointStatusHolder compensatedStatus;
+
+  private ServicePointStatusHolder currentStatus;
 
   public ServicePointState(ServicePointStatus status, String name) {
-    this.status = status;
+    prepareProcessStatus = new PrepareProcessStatus(this);
+    processingStatus = new ProcessingStatus(this);
+    compensatedStatus = new CompletedStatus(this);
+    prepareCompensateStatus = new PrepareCompensateStatus(this);
+    compensatingStatus = new CompensatingStatus(this);
+    compensatedStatus= new CompensatedStatus(this);
+
+    this.currentStatus = prepareProcessStatus; // init
+
     this.name = name;
     this.date = new Date();
     this.content = new HashMap<>();
+  }
+
+  public ServicePointStatus getStatus() {
+    return currentStatus.getStatus();
+  }
+
+  public void fillContent(Map<String, Object> resultParams) {
+    this.content.putAll(resultParams);
   }
 
   public Integer getOrder() {
@@ -41,12 +58,12 @@ public class ServicePointState {
     this.content = content;
   }
 
-  public ServicePointStatus getStatus() {
-    return status;
+  public ServicePointStatusHolder getCurrentStatus() {
+    return currentStatus;
   }
 
-  public void setStatus(ServicePointStatus status) {
-    this.status = status;
+  public void setCurrentStatus(ServicePointStatusHolder currentStatus) {
+    this.currentStatus = currentStatus;
   }
 
   public Date getDate() {
@@ -65,11 +82,59 @@ public class ServicePointState {
     this.name = name;
   }
 
+  public ServicePointStatusHolder getPrepareProcessStatus() {
+    return prepareProcessStatus;
+  }
+
+  public void setPrepareProcessStatus(ServicePointStatusHolder prepareProcessStatus) {
+    this.prepareProcessStatus = prepareProcessStatus;
+  }
+
+  public ServicePointStatusHolder getProcessingStatus() {
+    return processingStatus;
+  }
+
+  public void setProcessingStatus(ServicePointStatusHolder processingStatus) {
+    this.processingStatus = processingStatus;
+  }
+
+  public ServicePointStatusHolder getCompletedStatus() {
+    return completedStatus;
+  }
+
+  public void setCompletedStatus(ServicePointStatusHolder completedStatus) {
+    this.completedStatus = completedStatus;
+  }
+
+  public ServicePointStatusHolder getPrepareCompensateStatus() {
+    return prepareCompensateStatus;
+  }
+
+  public void setPrepareCompensateStatus(ServicePointStatusHolder prepareCompensateStatus) {
+    this.prepareCompensateStatus = prepareCompensateStatus;
+  }
+
+  public ServicePointStatusHolder getCompensatingStatus() {
+    return compensatingStatus;
+  }
+
+  public void setCompensatingStatus(ServicePointStatusHolder compensatingStatus) {
+    this.compensatingStatus = compensatingStatus;
+  }
+
+  public ServicePointStatusHolder getCompensatedStatus() {
+    return compensatedStatus;
+  }
+
+  public void setCompensatedStatus(ServicePointStatusHolder compensatedStatus) {
+    this.compensatedStatus = compensatedStatus;
+  }
+
   @Override
   public String toString() {
     final StringBuffer sb = new StringBuffer("{");
     sb.append("name='").append(name).append('\'');
-    sb.append(", status=").append(status);
+    sb.append(", currentStatus=").append(currentStatus.getStatus());
     sb.append(", order=").append(order);
 //    sb.append(", date=").append(date); // TODO
     sb.append(", content=").append(content);

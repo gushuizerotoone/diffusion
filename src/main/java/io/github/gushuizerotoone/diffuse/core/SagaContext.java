@@ -49,7 +49,7 @@ public class SagaContext {
     ServicePointState old = serviceStates.get(serviceName);
     old.getContent().putAll(servicePointState.getContent());
     old.setDate(servicePointState.getDate());
-    old.setStatus(servicePointState.getStatus());
+    old.setCurrentStatus(servicePointState.getCurrentStatus());
 
     saveServiceState(serviceName, old);
   }
