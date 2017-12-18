@@ -1,7 +1,6 @@
 package io.github.gushuizerotoone.diffuse.test;
 
 import io.github.gushuizerotoone.diffuse.core.policy.CompensateAlwaysPolicy;
-import io.github.gushuizerotoone.diffuse.core.policy.RetryAlwaysPolicy;
 import io.github.gushuizerotoone.diffuse.core.Saga;
 import io.github.gushuizerotoone.diffuse.core.SagaBuilder;
 import io.github.gushuizerotoone.diffuse.core.SagaContext;
@@ -16,7 +15,7 @@ import org.junit.Test;
 public class SimpleSagaTest {
 
   @Test
-  public void testMain() {
+  public void testNormalProcess() {
     SagaContext sagaContext = new SagaContext("SAGA_ID_1", "mySaga");
     SagaBuilder sb = new SagaBuilder();
     Saga saga = sb.sagaContext(sagaContext)
@@ -47,11 +46,12 @@ public class SimpleSagaTest {
 
     SagaStatus sagaStatus = saga.process();
     System.out.println(sagaContext);
+    Assert.assertEquals(SagaStatus.COMPENSATING, sagaStatus);
 
     SagaScheduler sagaScheduler = new SagaSchedulerImpl(sagaContextRepo);
-    sagaScheduler.prepareRedo(sagaContext.getSagaId());
+    saga = sagaScheduler.immediatelyRedo(sagaContext.getSagaId());
 
-    sagaContext = sagaContextRepo.getSagaContext(sagaContext.getSagaId());
-    System.out.println(sagaContext);
+    System.out.println(saga.getSagaContext());
+    Assert.assertEquals(SagaStatus.COMPENSATED, saga.status());
   }
 }

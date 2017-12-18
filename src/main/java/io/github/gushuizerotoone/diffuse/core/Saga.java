@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class Saga implements Redoable<SagaContext> {
+public class Saga implements Redoable<Saga> {
 
   private SagaContext sagaContext;
 
@@ -29,14 +29,14 @@ public class Saga implements Redoable<SagaContext> {
 
   public SagaStatus process() {
     firstServicePoint.normalProcess();
-    return status(sagaContext);
+    return status();
   }
 
   public SagaContext getSagaContext() {
     return sagaContext;
   }
 
-  private SagaStatus status(SagaContext sagaContext) {
+  public SagaStatus status() {
     // TODO: prepare to implement another way, map-reduce
     Map<String, ServicePointState> serviceStates = sagaContext.getServiceStates();
     Map<ServicePointStatus, Integer> serviceStatusCount = new HashMap<>(8);
@@ -52,7 +52,7 @@ public class Saga implements Redoable<SagaContext> {
       return SagaStatus.PROCESSING;
     }
 
-    if (serviceStatusCount.get(ServicePointStatus.COMPENSATING) > 0) {
+    if (serviceStatusCount.get(ServicePointStatus.COMPENSATING) > 0 || serviceStatusCount.get(ServicePointStatus.PREPARE_COMPENSATE) > 0) {
       return SagaStatus.COMPENSATING;
     }
 
@@ -68,7 +68,7 @@ public class Saga implements Redoable<SagaContext> {
   }
 
   @Override
-  public SagaContext redo() {
+  public Saga redo() {
     Objects.requireNonNull(redoPolicy, "Can not find redoPolicy: " + toShortString());
 
     List<ServicePointRedoStatus> redoStates = new ArrayList<>();
@@ -80,7 +80,7 @@ public class Saga implements Redoable<SagaContext> {
     }
 
     strategy.forward(firstServicePoint);
-    return sagaContext;
+    return this;
   }
 
   public ServicePoint getFirstServicePoint() {

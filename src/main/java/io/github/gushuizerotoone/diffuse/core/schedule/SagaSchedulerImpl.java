@@ -18,16 +18,15 @@ public class SagaSchedulerImpl implements SagaScheduler {
   public void processTimeoutSagas(Long timeoutSeconds) {
     List<SagaContext> sagas = sagaContextRepo.getTimeoutSagaContext(timeoutSeconds);
     sagas.stream()
-            .forEach(sagaContext -> prepareRedo(sagaContext.getSagaId()));
+            .forEach(sagaContext -> immediatelyRedo(sagaContext.getSagaId()));
   }
 
   @Override
-  public void prepareRedo(String sagaId) {
-    // TODO: queue impl, now invoke redo instantly
+  public Saga immediatelyRedo(String sagaId) {
     SagaContext sagaContext = sagaContextRepo.getSagaContext(sagaId);
     SagaBuilder sb = new SagaBuilder();
-
-    Saga saga = sb.rebuild(sagaContext);
-    saga.redo();
+    Saga saga = sb.sagaContextRepository(sagaContextRepo)
+            .rebuild(sagaContext);
+    return saga.redo();
   }
 }

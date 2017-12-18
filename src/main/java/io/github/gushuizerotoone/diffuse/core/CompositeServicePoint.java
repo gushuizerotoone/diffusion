@@ -46,7 +46,7 @@ public class CompositeServicePoint implements ServicePoint {
   @Override
   public SagaContext normalProcess() {
     ServicePointState state = sagaContext.getServiceState(getName());
-    if (state.getStatus() != ServicePointStatus.COMPLETED ) {
+    if (state.getStatus() != ServicePointStatus.COMPLETED && state.getStatus() != ServicePointStatus.PROCESSING) {
       state.getCurrentStatus().toProcessing();
       sagaContextRepo.saveSagaContext(sagaContext);
 
@@ -75,7 +75,8 @@ public class CompositeServicePoint implements ServicePoint {
     }
 
     ServicePointState state = sagaContext.getServiceState(getName());
-    if (state.getStatus() != ServicePointStatus.COMPENSATED ) {
+    if (state.getStatus() != ServicePointStatus.COMPENSATED && state.getStatus() != ServicePointStatus.COMPENSATING) {
+      state.getCurrentStatus().toPrepareCompensate();
       state.getCurrentStatus().toCompensating();
       sagaContextRepo.saveSagaContext(sagaContext);
 

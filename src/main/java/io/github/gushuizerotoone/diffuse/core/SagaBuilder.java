@@ -1,13 +1,11 @@
 package io.github.gushuizerotoone.diffuse.core;
 
-import io.github.gushuizerotoone.diffuse.core.policy.CompensateAlwaysPolicy;
 import io.github.gushuizerotoone.diffuse.core.policy.RedoPolicy;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePoint;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointState;
 import io.github.gushuizerotoone.diffuse.spi.SagaContextRepo;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Objects;
 
 public class SagaBuilder {
@@ -32,6 +30,13 @@ public class SagaBuilder {
     Objects.nonNull(sagaContextRepo);
 
     ServiceAdaptor serviceAdaptor = sagaFactory.getServiceAdaptor(serviceAdaptorClazz);
+    generateAndSetServicePoint(serviceAdaptor);
+
+    saga.getSagaContext().appendService(serviceAdaptorClazz);
+    return this;
+  }
+
+  private void generateAndSetServicePoint(ServiceAdaptor serviceAdaptor) {
     ServicePoint servicePoint = new CompositeServicePoint(saga.getSagaContext(), serviceAdaptor, sagaContextRepo);
     if (saga.getFirstServicePoint() == null) {
       saga.setFirstServicePoint(servicePoint);
@@ -40,9 +45,6 @@ public class SagaBuilder {
 
     lastServicePoint.setNext(servicePoint);
     lastServicePoint = servicePoint;
-
-    saga.getSagaContext().appendService(serviceAdaptorClazz);
-    return this;
   }
 
   public SagaBuilder redoPolicy(Class<? extends RedoPolicy> redoPolicyClazz) {
@@ -55,10 +57,6 @@ public class SagaBuilder {
     return this;
   }
 
-  public Saga toSaga() {
-    return saga;
-  }
-
   public Saga rebuild(SagaContext sagaContext) {
     sagaContext(sagaContext);
 
@@ -66,13 +64,17 @@ public class SagaBuilder {
     sagaContext.getServiceStates().values()
             .stream()
             .sorted(Comparator.comparing(ServicePointState::getOrder))
-            .map(servicePointState -> sagaFactory.getServiceAdaptor(servicePointState.getName()))
-            .forEach(serviceAdaptor -> addService((Class<ServiceAdaptor>)serviceAdaptor.getClass()));
+            .map(servicePointState -> sagaFactory.getServiceAdaptor(servicePointState.getClassName()))
+            .forEach(serviceAdaptor -> generateAndSetServicePoint(serviceAdaptor));
 
     // generate RedoPolicy
-    redoPolicy((Class<RedoPolicy>) sagaFactory.getRedoPolicy(sagaContext.getRedoPolicyClassName()).getClass());
+    redoPolicy(sagaFactory.getRedoPolicy(sagaContext.getRedoPolicyClassName()).getClass());
 
     return toSaga();
+  }
+
+  public Saga toSaga() {
+    return saga;
   }
 
 }

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ServicePointState {
-  private String name;
+  private String className;
   private Integer order;
   private Date date;
   private Map<String, Object> content;
@@ -32,7 +32,7 @@ public class ServicePointState {
 
     this.currentStatus = prepareProcessStatus; // init
 
-    this.name = serviceAdaptorClass.getName();
+    this.className = serviceAdaptorClass.getName();
     this.date = new Date();
     this.content = new HashMap<>();
   }
@@ -77,12 +77,12 @@ public class ServicePointState {
     this.date = date;
   }
 
-  public String getName() {
-    return name;
+  public String getClassName() {
+    return className;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setClassName(String className) {
+    this.className = className;
   }
 
   public ServicePointStatusHolder getPrepareProcessStatus() {
@@ -136,7 +136,7 @@ public class ServicePointState {
   @Override
   public String toString() {
     final StringBuffer sb = new StringBuffer("{");
-    sb.append("name='").append(name).append('\'');
+    sb.append("className='").append(className).append('\'');
     sb.append(", currentStatus=").append(currentStatus.getStatus());
     sb.append(", order=").append(order);
 //    sb.append(", date=").append(date); // TODO
