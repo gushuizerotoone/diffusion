@@ -1,4 +1,6 @@
-package io.github.gushuizerotoone.diffuse.core;
+package io.github.gushuizerotoone.diffuse.core.servicepoint;
+
+import io.github.gushuizerotoone.diffuse.core.SagaContext;
 
 import java.util.List;
 

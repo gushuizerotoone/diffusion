@@ -1,5 +1,7 @@
 package io.github.gushuizerotoone.diffuse.core;
 
+import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointRedoStatus;
+
 import java.util.List;
 
 public class RetryFirstPolicy implements RedoPolicy {

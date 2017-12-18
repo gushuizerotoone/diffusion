@@ -1,4 +1,4 @@
-package io.github.gushuizerotoone.diffuse.core;
+package io.github.gushuizerotoone.diffuse.core.servicepoint;
 
 public enum ServicePointStatus {
   PREPARE_PROCESS,

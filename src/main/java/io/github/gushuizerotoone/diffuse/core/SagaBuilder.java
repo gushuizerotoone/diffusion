@@ -1,5 +1,6 @@
 package io.github.gushuizerotoone.diffuse.core;
 
+import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePoint;
 import io.github.gushuizerotoone.diffuse.spi.SagaContextRepo;
 
 public class SagaBuilder {

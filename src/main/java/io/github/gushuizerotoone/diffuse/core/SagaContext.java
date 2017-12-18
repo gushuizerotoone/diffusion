@@ -1,5 +1,8 @@
 package io.github.gushuizerotoone.diffuse.core;
 
+import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointState;
+import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointStatus;
+
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package io.github.gushuizerotoone.diffuse.core;
+package io.github.gushuizerotoone.diffuse.core.servicepoint;
 
 import java.util.Date;
 import java.util.HashMap;

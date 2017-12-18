@@ -2,8 +2,8 @@ package io.github.gushuizerotoone.diffuse.test;
 
 import io.github.gushuizerotoone.diffuse.core.SagaContext;
 import io.github.gushuizerotoone.diffuse.core.ServiceAdaptor;
-import io.github.gushuizerotoone.diffuse.core.ServicePointStatus;
-import io.github.gushuizerotoone.diffuse.core.ServicePointState;
+import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointStatus;
+import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointState;
 
 import java.util.HashMap;
 import java.util.Map;
