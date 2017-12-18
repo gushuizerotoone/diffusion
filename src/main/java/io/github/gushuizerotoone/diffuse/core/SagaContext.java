@@ -1,5 +1,6 @@
 package io.github.gushuizerotoone.diffuse.core;
 
+import io.github.gushuizerotoone.diffuse.core.policy.RedoPolicy;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointState;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointStatus;
 
@@ -45,16 +46,7 @@ public class SagaContext {
     sagaBaseMap.put(REDO_POLICY, redoPolicy.getClass().getSimpleName());
   }
 
-  public void fill(String serviceName, ServicePointState servicePointState) {
-    ServicePointState old = serviceStates.get(serviceName);
-    old.getContent().putAll(servicePointState.getContent());
-    old.setDate(servicePointState.getDate());
-    old.setCurrentStatus(servicePointState.getCurrentStatus());
-
-    saveServiceState(serviceName, old);
-  }
-
-  private void saveServiceState(String serviceName, ServicePointState state) {
+  public void setServiceState(String serviceName, ServicePointState state) {
     serviceStates.put(serviceName, state);
     lastModifyDate = new Date();
   }

@@ -26,6 +26,7 @@ public class ServicePointState {
     prepareCompensateStatus = new PrepareCompensateStatus(this);
     compensatingStatus = new CompensatingStatus(this);
     compensatedStatus= new CompensatedStatus(this);
+    completedStatus = new CompletedStatus(this);
 
     this.currentStatus = prepareProcessStatus; // init
 

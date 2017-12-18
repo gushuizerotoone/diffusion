@@ -1,6 +1,6 @@
 package io.github.gushuizerotoone.diffuse.test;
 
-import io.github.gushuizerotoone.diffuse.core.RetryAlwaysPolicy;
+import io.github.gushuizerotoone.diffuse.core.policy.RetryAlwaysPolicy;
 import io.github.gushuizerotoone.diffuse.core.Saga;
 import io.github.gushuizerotoone.diffuse.core.SagaBuilder;
 import io.github.gushuizerotoone.diffuse.core.SagaContext;

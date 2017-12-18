@@ -46,13 +46,15 @@ public class CompositeServicePoint implements ServicePoint {
   @Override
   public SagaContext normalProcess() {
     ServicePointState state = sagaContext.getServiceState(getName());
-    state.getCurrentStatus().toProcessing();
-    sagaContextRepo.saveSagaContext(sagaContext);
+    if (state.getStatus() != ServicePointStatus.COMPLETED ) {
+      state.getCurrentStatus().toProcessing();
+      sagaContextRepo.saveSagaContext(sagaContext);
 
-    ServicePointState servicePointState = serviceAdaptor.normalProcess(sagaContext);
-    sagaContext.fill(getName(), servicePointState);
-    if (servicePointState.getStatus() != ServicePointStatus.COMPLETED) {
-      return sagaContext;
+      ServicePointState servicePointState = serviceAdaptor.normalProcess(sagaContext);
+      sagaContext.setServiceState(getName(), servicePointState);
+      if (servicePointState.getStatus() != ServicePointStatus.COMPLETED) {
+        return sagaContext;
+      }
     }
 
     if (!isLeaf()) {
@@ -73,11 +75,13 @@ public class CompositeServicePoint implements ServicePoint {
     }
 
     ServicePointState state = sagaContext.getServiceState(getName());
-    state.getCurrentStatus().toCompensating();
-    sagaContextRepo.saveSagaContext(sagaContext);
+    if (state.getStatus() != ServicePointStatus.COMPENSATED ) {
+      state.getCurrentStatus().toCompensating();
+      sagaContextRepo.saveSagaContext(sagaContext);
 
-    ServicePointState servicePointState = serviceAdaptor.compensate(sagaContext);
-    sagaContext.fill(getName(), servicePointState);
+      ServicePointState servicePointState = serviceAdaptor.compensate(sagaContext);
+      sagaContext.setServiceState(getName(), servicePointState);
+    }
 
     return sagaContext;
   }

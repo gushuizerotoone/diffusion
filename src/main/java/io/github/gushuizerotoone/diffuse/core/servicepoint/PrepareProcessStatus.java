@@ -11,26 +11,27 @@ public class PrepareProcessStatus implements ServicePointStatusHolder {
 
   @Override
   public void toProcessing() {
-
+    servicePointState.setCurrentStatus(servicePointState.getProcessingStatus());
   }
 
   @Override
   public void toCompleted() {
-
+    throw new IllegalStateException("PrepareProcessing status can not change to Completed status");
   }
 
   @Override
   public void toPrepareCompensate() {
+    servicePointState.setCurrentStatus(servicePointState.getPrepareCompensateStatus());
   }
 
   @Override
   public void toCompensating() {
-
+    throw new IllegalStateException("PrepareProcessing status can not change to Compensating status");
   }
 
   @Override
   public void toCompensated() {
-
+    throw new IllegalStateException("PrepareProcessing status can not change to Compensated status");
   }
 
   @Override
