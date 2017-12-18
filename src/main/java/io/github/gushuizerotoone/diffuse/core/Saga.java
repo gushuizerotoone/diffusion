@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class Saga implements Redoable<Saga> {
 
@@ -37,30 +38,21 @@ public class Saga implements Redoable<Saga> {
   }
 
   public SagaStatus status() {
-    // TODO: prepare to implement another way, map-reduce
     Map<String, ServicePointState> serviceStates = sagaContext.getServiceStates();
-    Map<ServicePointStatus, Integer> serviceStatusCount = new HashMap<>(8);
 
-    Arrays.stream(ServicePointStatus.values())
-            .forEach(status -> serviceStatusCount.put(status, 0));
-
-    serviceStates.values()
+    Map<ServicePointStatus, Integer> serviceStatusCount = serviceStates.values()
             .stream()
-            .forEach(state -> serviceStatusCount.put(state.getStatus(), serviceStatusCount.get(state.getStatus()) + 1));
+            .collect(Collectors.toMap(s -> s.getStatus(), s -> 1, (v1, v2) -> v1 + v2));
 
-    if (serviceStatusCount.get(ServicePointStatus.PROCESSING) > 0) {
-      return SagaStatus.PROCESSING;
-    }
-
-    if (serviceStatusCount.get(ServicePointStatus.COMPENSATING) > 0 || serviceStatusCount.get(ServicePointStatus.PREPARE_COMPENSATE) > 0) {
+    if (serviceStatusCount.getOrDefault(ServicePointStatus.COMPENSATING, 0) > 0 || serviceStatusCount.getOrDefault(ServicePointStatus.PREPARE_COMPENSATE, 0) > 0) {
       return SagaStatus.COMPENSATING;
     }
 
-    if (serviceStatusCount.get(ServicePointStatus.COMPLETED) == serviceStates.size()) {
+    if (serviceStatusCount.getOrDefault(ServicePointStatus.COMPLETED, 0) == serviceStates.size()) {
       return SagaStatus.COMPLETED;
     }
 
-    if (serviceStatusCount.get(ServicePointStatus.COMPENSATED) == serviceStates.size()) {
+    if (serviceStatusCount.getOrDefault(ServicePointStatus.COMPENSATED, 0) == serviceStates.size()) {
       return SagaStatus.COMPENSATED;
     }
 
