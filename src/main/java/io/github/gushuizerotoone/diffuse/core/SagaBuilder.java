@@ -1,17 +1,25 @@
 package io.github.gushuizerotoone.diffuse.core;
 
+import io.github.gushuizerotoone.diffuse.spi.SagaContextRepo;
+
 public class SagaBuilder {
 
   private Saga saga;
   private ServicePoint lastServicePoint;
+  private SagaContextRepo sagaContextRepo;
 
   public SagaBuilder sagaContext(SagaContext sagaContext) {
     saga = new Saga(sagaContext);
     return this;
   }
 
+  public SagaBuilder sagaContextRepository(SagaContextRepo sagaContextRepo) {
+    this.sagaContextRepo = sagaContextRepo;
+    return this;
+  }
+
   public SagaBuilder addService(ServiceAdaptor serviceAdaptor) {
-    ServicePoint servicePoint = new CompositeServicePoint(saga.getSagaContext(), serviceAdaptor);
+    ServicePoint servicePoint = new CompositeServicePoint(saga.getSagaContext(), serviceAdaptor, sagaContextRepo);
     if (saga.getFirstServicePoint() == null) {
       saga.setFirstServicePoint(servicePoint);
       lastServicePoint = servicePoint;

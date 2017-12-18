@@ -5,6 +5,7 @@ import io.github.gushuizerotoone.diffuse.core.Saga;
 import io.github.gushuizerotoone.diffuse.core.SagaBuilder;
 import io.github.gushuizerotoone.diffuse.core.SagaContext;
 import io.github.gushuizerotoone.diffuse.core.SagaStatus;
+import io.github.gushuizerotoone.diffuse.spi.InMemorySagaContextRepo;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -15,6 +16,7 @@ public class SimpleSagaTest {
     SagaContext sagaContext = new SagaContext("SAGA_ID_1", "mySaga");
     SagaBuilder sb = new SagaBuilder();
     Saga saga = sb.sagaContext(sagaContext)
+            .sagaContextRepository(new InMemorySagaContextRepo())
             .addService(new OrderServiceAdaptor())
             .addService(new WalletServiceAdaptor())
             .redoPolicy(new RetryAlwaysPolicy())
