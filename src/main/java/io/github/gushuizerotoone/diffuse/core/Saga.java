@@ -1,17 +1,11 @@
 package io.github.gushuizerotoone.diffuse.core;
 
 import io.github.gushuizerotoone.diffuse.core.policy.RedoPolicy;
-import io.github.gushuizerotoone.diffuse.core.schedule.SagaScheduler;
-import io.github.gushuizerotoone.diffuse.core.schedule.SagaSchedulerImpl;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePoint;
-import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointRedoStatus;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointState;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointStatus;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -63,11 +57,8 @@ public class Saga implements Redoable<Saga> {
   public Saga redo() {
     Objects.requireNonNull(redoPolicy, "Can not find redoPolicy: " + toShortString());
 
-    List<ServicePointRedoStatus> redoStates = new ArrayList<>();
-    firstServicePoint.fillRedoStates(redoStates);
-
-    Strategy strategy = redoPolicy.getStrategy(redoStates);
-    if (redoPolicy.getStrategy(redoStates) == null) {
+    Strategy strategy = redoPolicy.getStrategy(new ArrayList<>(sagaContext.getServiceStates().values()));
+    if (strategy == null) {
       throw new RuntimeException("Can not redo sagaContext: " + toShortString());
     }
 

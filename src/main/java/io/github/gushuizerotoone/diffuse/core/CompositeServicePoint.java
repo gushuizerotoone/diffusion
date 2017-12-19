@@ -1,12 +1,9 @@
 package io.github.gushuizerotoone.diffuse.core;
 
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePoint;
-import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointRedoStatus;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointState;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointStatus;
 import io.github.gushuizerotoone.diffuse.spi.SagaContextRepo;
-
-import java.util.List;
 
 public class CompositeServicePoint implements ServicePoint {
 
@@ -31,11 +28,6 @@ public class CompositeServicePoint implements ServicePoint {
   @Override
   public boolean isLeaf() {
     return nextServicePoint == null;
-  }
-
-  @Override
-  public ServicePoint getNext() {
-    return nextServicePoint;
   }
 
   @Override
@@ -87,16 +79,4 @@ public class CompositeServicePoint implements ServicePoint {
     return sagaContext;
   }
 
-  @Override
-  public void fillRedoStates(List<ServicePointRedoStatus> redoStates) {
-    redoStates.add(serviceAdaptor.getRedoState(sagaContext));
-    if (!isLeaf()) {
-      nextServicePoint.fillRedoStates(redoStates);
-    }
-  }
-
-  @Override
-  public ServicePointStatus getState() {
-    return serviceAdaptor.getState(sagaContext);
-  }
 }

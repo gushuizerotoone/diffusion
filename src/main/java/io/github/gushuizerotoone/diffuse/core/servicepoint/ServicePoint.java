@@ -10,15 +10,10 @@ public interface ServicePoint {
 
   boolean isLeaf();
 
-  ServicePoint getNext();
-
   void setNext(ServicePoint servicePoint);
 
   SagaContext normalProcess();
 
   SagaContext compensate();
 
-  void fillRedoStates(List<ServicePointRedoStatus> redoStates);
-
-  ServicePointStatus getState();
 }

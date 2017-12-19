@@ -34,8 +34,4 @@ public class WalletServiceAdaptor implements ServiceAdaptor {
     return serviceState;
   }
 
-  @Override
-  public ServicePointStatus getState(SagaContext sagaContext) {
-    return ServicePointStatus.COMPLETED;
-  }
 }
