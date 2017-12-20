@@ -1,5 +1,7 @@
 package io.github.gushuizerotoone.diffuse.test;
 
+import io.github.gushuizerotoone.diffuse.core.SagaFactory;
+import io.github.gushuizerotoone.diffuse.core.SagaFactoryImpl;
 import io.github.gushuizerotoone.diffuse.core.policy.CompensateAlwaysPolicy;
 import io.github.gushuizerotoone.diffuse.core.Saga;
 import io.github.gushuizerotoone.diffuse.core.SagaBuilder;
@@ -16,10 +18,13 @@ public class SimpleSagaTest {
 
   @Test
   public void testNormalProcess() {
+    SagaFactory sagaFactory = SagaFactoryImpl.getInstance();
+    SagaContextRepo sagaContextRepo = sagaFactory.getSagaContextRepo(InMemorySagaContextRepo.class);
+
     SagaContext sagaContext = new SagaContext("SAGA_ID_1", "mySaga");
     SagaBuilder sb = new SagaBuilder();
     Saga saga = sb.sagaContext(sagaContext)
-            .sagaContextRepository(new InMemorySagaContextRepo())
+            .sagaContextRepository(sagaContextRepo)
             .addService(OrderServiceAdaptor.class)
             .addService(WalletServiceAdaptor.class)
             .redoPolicy(CompensateAlwaysPolicy.class)
@@ -34,7 +39,9 @@ public class SimpleSagaTest {
 
   @Test
   public void testCompensate() {
-    SagaContextRepo sagaContextRepo = new InMemorySagaContextRepo();
+    SagaFactory sagaFactory = SagaFactoryImpl.getInstance();
+
+    SagaContextRepo sagaContextRepo = sagaFactory.getSagaContextRepo(InMemorySagaContextRepo.class);
     SagaContext sagaContext = new SagaContext("SAGA_ID_2", "mySaga");
     SagaBuilder sb = new SagaBuilder();
     Saga saga = sb.sagaContext(sagaContext)
@@ -48,10 +55,10 @@ public class SimpleSagaTest {
     System.out.println(sagaContext);
     Assert.assertEquals(SagaStatus.COMPENSATING, sagaStatus);
 
-    SagaScheduler sagaScheduler = new SagaSchedulerImpl(sagaContextRepo);
+    SagaScheduler sagaScheduler = sagaFactory.getSagaScheduler(SagaSchedulerImpl.class);
     saga = sagaScheduler.immediatelyRedo(sagaContext.getSagaId());
 
     System.out.println(saga.getSagaContext());
-    Assert.assertEquals(SagaStatus.COMPENSATED, saga.status());
+    Assert.assertEquals(SagaStatus.COMPENSATED, saga.normalizeStatus());
   }
 }

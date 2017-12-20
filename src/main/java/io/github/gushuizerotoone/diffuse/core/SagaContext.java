@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class SagaContext {
   private String sagaId;
@@ -16,6 +17,7 @@ public class SagaContext {
   private Map<String, ServicePointState> serviceStates;
   private int order = 0;
   private Date lastModifyDate;
+  private SagaStatus sagaStatus;
 
   private static final String REDO_POLICY = "_Redo_Policy";
 
@@ -62,6 +64,37 @@ public class SagaContext {
 
   public ServicePointState getServiceState(String serviceName) {
     return serviceStates.get(serviceName);
+  }
+
+  public SagaStatus normalizeSagaStatus() {
+    Map<String, ServicePointState> serviceStates = getServiceStates();
+
+    Map<ServicePointStatus, Integer> serviceStatusCount = serviceStates.values()
+            .stream()
+            .collect(Collectors.toMap(s -> s.getStatus(), s -> 1, (v1, v2) -> v1 + v2));
+
+    if (serviceStatusCount.getOrDefault(ServicePointStatus.COMPENSATING, 0) > 0 || serviceStatusCount.getOrDefault(ServicePointStatus.PREPARE_COMPENSATE, 0) > 0) {
+      return setAndGetSagaStatus(SagaStatus.COMPENSATING);
+    }
+
+    if (serviceStatusCount.getOrDefault(ServicePointStatus.COMPLETED, 0) == serviceStates.size()) {
+      return setAndGetSagaStatus(SagaStatus.COMPLETED);
+    }
+
+    if (serviceStatusCount.getOrDefault(ServicePointStatus.COMPENSATED, 0) == serviceStates.size()) {
+      return setAndGetSagaStatus(SagaStatus.COMPENSATED);
+    }
+
+    return setAndGetSagaStatus(SagaStatus.PROCESSING);
+  }
+
+  private SagaStatus setAndGetSagaStatus(SagaStatus sagaStatus) {
+    setSagaStatus(sagaStatus);
+    return sagaStatus;
+  }
+
+  public void setSagaStatus(SagaStatus sagaStatus) {
+    this.sagaStatus = sagaStatus;
   }
 
   public String getSagaId() {

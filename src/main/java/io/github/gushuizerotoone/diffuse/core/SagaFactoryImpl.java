@@ -1,6 +1,8 @@
 package io.github.gushuizerotoone.diffuse.core;
 
 import io.github.gushuizerotoone.diffuse.core.policy.RedoPolicy;
+import io.github.gushuizerotoone.diffuse.core.schedule.SagaScheduler;
+import io.github.gushuizerotoone.diffuse.spi.SagaContextRepo;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -8,6 +10,22 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SagaFactoryImpl implements SagaFactory {
 
   private Map<Class, Object> instanceMap = new ConcurrentHashMap<>();
+
+  private static SagaFactoryImpl instance;
+
+  public static SagaFactoryImpl getInstance() {
+    if (instance == null) {
+      synchronized (SagaFactoryImpl.class) {
+        if (instance == null) {
+          instance = new SagaFactoryImpl();
+        }
+      }
+    }
+    return instance;
+  }
+
+  private SagaFactoryImpl() {
+  }
 
   @Override
   public ServiceAdaptor getServiceAdaptor(Class<? extends ServiceAdaptor> clazz) {
@@ -27,6 +45,26 @@ public class SagaFactoryImpl implements SagaFactory {
   @Override
   public RedoPolicy getRedoPolicy(String className) {
     return getRedoPolicy(forName(className));
+  }
+
+  @Override
+  public SagaContextRepo getSagaContextRepo(Class<? extends SagaContextRepo> clazz) {
+    return getInstance(clazz);
+  }
+
+  @Override
+  public SagaContextRepo getSagaContextRepo(String className) {
+    return getSagaContextRepo(forName(className));
+  }
+
+  @Override
+  public SagaScheduler getSagaScheduler(Class<? extends SagaScheduler> clazz) {
+    return getInstance(clazz);
+  }
+
+  @Override
+  public SagaScheduler getSagaScheduler(String className) {
+    return getSagaScheduler(forName(className));
   }
 
   private <T> Class<T> forName(String className) {

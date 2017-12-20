@@ -3,15 +3,20 @@ package io.github.gushuizerotoone.diffuse.core.schedule;
 import io.github.gushuizerotoone.diffuse.core.Saga;
 import io.github.gushuizerotoone.diffuse.core.SagaBuilder;
 import io.github.gushuizerotoone.diffuse.core.SagaContext;
+import io.github.gushuizerotoone.diffuse.core.SagaFactory;
+import io.github.gushuizerotoone.diffuse.core.SagaFactoryImpl;
+import io.github.gushuizerotoone.diffuse.spi.InMemorySagaContextRepo;
 import io.github.gushuizerotoone.diffuse.spi.SagaContextRepo;
 
 import java.util.List;
 
 public class SagaSchedulerImpl implements SagaScheduler {
   private SagaContextRepo sagaContextRepo;
+  private SagaFactory sagaFactory = SagaFactoryImpl.getInstance(); // TODO
 
-  public SagaSchedulerImpl(SagaContextRepo sagaContextRepo) {
-    this.sagaContextRepo = sagaContextRepo;
+  public SagaSchedulerImpl() {
+    this.sagaContextRepo = sagaFactory.getSagaContextRepo(InMemorySagaContextRepo.class);
+    System.out.println("TODO, remove");
   }
 
   @Override
@@ -29,4 +34,5 @@ public class SagaSchedulerImpl implements SagaScheduler {
             .rebuild(sagaContext);
     return saga.redo();
   }
+
 }

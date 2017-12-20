@@ -13,7 +13,7 @@ public class SagaBuilder {
   private Saga saga;
   private ServicePoint lastServicePoint;
   private SagaContextRepo sagaContextRepo;
-  private SagaFactory sagaFactory = new SagaFactoryImpl(); // TODO
+  private SagaFactory sagaFactory = SagaFactoryImpl.getInstance(); // TODO
 
   public SagaBuilder sagaContext(SagaContext sagaContext) {
     saga = new Saga(sagaContext);
