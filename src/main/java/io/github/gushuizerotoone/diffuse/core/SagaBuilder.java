@@ -40,10 +40,10 @@ public class SagaBuilder {
     ServicePoint servicePoint = new CompositeServicePoint(saga.getSagaContext(), serviceAdaptor, sagaContextRepo);
     if (saga.getFirstServicePoint() == null) {
       saga.setFirstServicePoint(servicePoint);
-      lastServicePoint = servicePoint;
+    } else {
+      lastServicePoint.setNext(servicePoint);
     }
 
-    lastServicePoint.setNext(servicePoint);
     lastServicePoint = servicePoint;
   }
 

@@ -79,7 +79,9 @@ public class SagaFactoryImpl implements SagaFactory {
 
   private <T> T getInstance(Class<T> clazz) {
     try {
-      return (T) instanceMap.getOrDefault(clazz, clazz.newInstance());
+      T classInstance = (T)instanceMap.getOrDefault(clazz, clazz.newInstance());
+      instanceMap.putIfAbsent(clazz, classInstance);
+      return classInstance;
     } catch (InstantiationException e) {
       e.printStackTrace();
       throw new RuntimeException("Catch exception while get instance for class " + clazz.getSimpleName());

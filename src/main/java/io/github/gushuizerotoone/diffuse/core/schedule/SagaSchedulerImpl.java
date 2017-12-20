@@ -16,7 +16,6 @@ public class SagaSchedulerImpl implements SagaScheduler {
 
   public SagaSchedulerImpl() {
     this.sagaContextRepo = sagaFactory.getSagaContextRepo(InMemorySagaContextRepo.class);
-    System.out.println("TODO, remove");
   }
 
   @Override

@@ -26,7 +26,6 @@ public class Saga implements Redoable<Saga> {
 
   public SagaStatus process() {
     firstServicePoint.normalProcess();
-
     SagaStatus sagaStatus = normalizeStatus();
 
     // if not COMPLETED, will retry or compensate

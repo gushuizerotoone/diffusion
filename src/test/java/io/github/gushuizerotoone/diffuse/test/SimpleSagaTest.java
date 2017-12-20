@@ -53,12 +53,6 @@ public class SimpleSagaTest {
 
     SagaStatus sagaStatus = saga.process();
     System.out.println(sagaContext);
-    Assert.assertEquals(SagaStatus.COMPENSATING, sagaStatus);
-
-    SagaScheduler sagaScheduler = sagaFactory.getSagaScheduler(SagaSchedulerImpl.class);
-    saga = sagaScheduler.immediatelyRedo(sagaContext.getSagaId());
-
-    System.out.println(saga.getSagaContext());
-    Assert.assertEquals(SagaStatus.COMPENSATED, saga.normalizeStatus());
+    Assert.assertEquals(SagaStatus.COMPENSATED, sagaStatus);
   }
 }
