@@ -21,6 +21,8 @@ public class ServicePointState {
 
   private ServicePointStatusHolder currentStatus;
 
+  private ServicePointAction servicePointAction;
+
   public ServicePointState(Class<? extends ServiceAdaptor> serviceAdaptorClass) {
     prepareProcessStatus = new PrepareProcessStatus(this);
     processingStatus = new ProcessingStatus(this);
@@ -35,6 +37,7 @@ public class ServicePointState {
     this.className = serviceAdaptorClass.getName();
     this.date = new Date();
     this.content = new HashMap<>();
+    this.servicePointAction = ServicePointAction.DEPEND_ON_POLICY; // init
   }
 
   public ServicePointStatus getStatus() {
@@ -133,11 +136,20 @@ public class ServicePointState {
     this.compensatedStatus = compensatedStatus;
   }
 
+  public ServicePointAction getServicePointAction() {
+    return servicePointAction;
+  }
+
+  public void setServicePointAction(ServicePointAction servicePointAction) {
+    this.servicePointAction = servicePointAction;
+  }
+
   @Override
   public String toString() {
     final StringBuffer sb = new StringBuffer("{");
     sb.append("className='").append(className).append('\'');
     sb.append(", currentStatus=").append(currentStatus.getStatus());
+    sb.append(", servicePointAction=").append(servicePointAction);
     sb.append(", order=").append(order);
 //    sb.append(", date=").append(date); // TODO
     sb.append(", content=").append(content);

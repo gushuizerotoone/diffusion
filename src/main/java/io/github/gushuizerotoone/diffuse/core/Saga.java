@@ -25,16 +25,21 @@ public class Saga implements Redoable<Saga> {
   }
 
   public SagaStatus process() {
-    firstServicePoint.normalProcess();
-    SagaStatus sagaStatus = normalizeStatus();
+    try {
+      firstServicePoint.normalProcess();
+      SagaStatus sagaStatus = normalizeStatus();
 
-    // if not COMPLETED, will retry or compensate
-    if (sagaStatus != SagaStatus.COMPLETED) {
-      sagaScheduler.immediatelyRedo(sagaContext.getSagaId());
+      // if not COMPLETED, will retry or compensate
+      if (sagaStatus != SagaStatus.COMPLETED) {
+        sagaScheduler.immediatelyRedo(sagaContext.getSagaId());
+        return normalizeStatus();
+      }
+
+      return sagaStatus;
+    } catch (Exception e) {
+      e.printStackTrace(); // TODO, replace by log
       return normalizeStatus();
     }
-
-    return sagaStatus;
   }
 
   public SagaContext getSagaContext() {
@@ -49,12 +54,17 @@ public class Saga implements Redoable<Saga> {
   public Saga redo() {
     Objects.requireNonNull(redoPolicy, "Can not find redoPolicy: " + toShortString());
 
-    Strategy strategy = redoPolicy.getStrategy(new ArrayList<>(sagaContext.getServiceStates().values()));
+    Strategy strategy = redoPolicy.decideStrategy(new ArrayList<>(sagaContext.getServiceStates().values()));
     if (strategy == null) {
       throw new RuntimeException("Can not redo sagaContext: " + toShortString());
     }
 
-    strategy.forward(firstServicePoint);
+    try {
+      strategy.forward(firstServicePoint);
+    } catch (Exception e) {
+      e.printStackTrace(); // TODO, replace by log
+    }
+
     return this;
   }
 

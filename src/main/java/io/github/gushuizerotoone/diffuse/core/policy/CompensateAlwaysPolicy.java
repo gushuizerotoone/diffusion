@@ -8,7 +8,7 @@ import java.util.List;
 
 public class CompensateAlwaysPolicy implements RedoPolicy {
   @Override
-  public Strategy getStrategy(List<ServicePointState> states) {
+  public Strategy findStrategy(List<ServicePointState> states) {
     return new CompensateStrategy();
   }
 }
