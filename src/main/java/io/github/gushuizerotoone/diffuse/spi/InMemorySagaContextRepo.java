@@ -1,6 +1,7 @@
 package io.github.gushuizerotoone.diffuse.spi;
 
 import io.github.gushuizerotoone.diffuse.core.SagaContext;
+import io.github.gushuizerotoone.diffuse.core.SagaStatus;
 
 import java.util.Comparator;
 import java.util.List;
@@ -22,11 +23,12 @@ public class InMemorySagaContextRepo implements SagaContextRepo {
   }
 
   @Override
-  public List<SagaContext> getTimeoutSagaContext(long timeoutSeconds) {
+  public List<SagaContext> getTimeoutSagaContext(long timeoutInSeconds) {
     return sagaContextMap.values()
             .stream()
-            .filter(sagaContext -> (System.currentTimeMillis() - sagaContext.getLastModifyDate().getTime()) > timeoutSeconds * 1000)
+            .filter(sagaContext -> sagaContext.isSagaNotEnded( )&& (System.currentTimeMillis() - sagaContext.getLastModifyDate().getTime()) > timeoutInSeconds * 1000)
             .sorted(Comparator.comparing(SagaContext::getLastModifyDate))
             .collect(Collectors.toList());
   }
+
 }

@@ -97,6 +97,11 @@ public class SagaContext {
     this.sagaStatus = sagaStatus;
   }
 
+  public boolean isSagaNotEnded() {
+    return sagaStatus != SagaStatus.COMPLETED && sagaStatus != SagaStatus.COMPENSATED;
+  }
+
+
   public String getSagaId() {
     return sagaId;
   }
@@ -145,6 +150,10 @@ public class SagaContext {
     this.lastModifyDate = lastModifyDate;
   }
 
+  public SagaStatus getSagaStatus() {
+    return sagaStatus;
+  }
+
   @Override
   public String toString() {
     final StringBuffer sb = new StringBuffer("SagaContext{");
@@ -156,17 +165,5 @@ public class SagaContext {
     sb.append(", serviceStates=").append(serviceStates);
     sb.append('}');
     return sb.toString();
-  }
-
-  public boolean isRedoNow() {
-    return false; // TODO
-  }
-
-  public boolean isRedoLater() {
-    return false; // TODO
-  }
-
-  public Long getRedoDelay() {
-    return 0l;  // TODO
   }
 }

@@ -9,9 +9,12 @@ import io.github.gushuizerotoone.diffuse.spi.InMemorySagaContextRepo;
 import io.github.gushuizerotoone.diffuse.spi.SagaContextRepo;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class SagaSchedulerImpl implements SagaScheduler {
   private SagaContextRepo sagaContextRepo;
@@ -36,12 +39,16 @@ public class SagaSchedulerImpl implements SagaScheduler {
     Saga saga = sb.sagaContextRepository(sagaContextRepo)
             .rebuild(sagaContext);
 
-    if (sagaContext.isRedoNow()) {
-      return saga.redo();
-    } else if (sagaContext.isRedoLater()) {
-      executorService.scheduleWithFixedDelay(() -> saga.redo(), 0, sagaContext.getRedoDelay(), TimeUnit.SECONDS);
+    try {
+      CompletableFuture<Saga> f = CompletableFuture.supplyAsync(() -> saga.redo(), executorService);
+      return f.get(10l, TimeUnit.SECONDS);
+    } catch (InterruptedException e) {
+      throw new RuntimeException("Redo InterruptedException for saga: " + sagaId + ", " + e.getMessage());
+    } catch (ExecutionException e) {
+      throw new RuntimeException("Redo ExecutionException for saga: " + sagaId + ", " + e.getMessage());
+    } catch (TimeoutException e) {
+      throw new RuntimeException("Redo TimeoutException for saga: " + sagaId + ", " + e.getMessage());
     }
-    return saga;
   }
 
 }

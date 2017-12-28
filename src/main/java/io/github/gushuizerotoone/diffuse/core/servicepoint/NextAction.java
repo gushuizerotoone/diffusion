@@ -12,6 +12,23 @@ public class NextAction {
     this.actionType = actionType;
   }
 
+  /**
+   * Decide whether action is allow
+   * @return
+   */
+  public boolean allowActionAndMinusCountsLeft() {
+    if (actionTime.isAfter(Instant.now())) {
+      return false;
+    }
+
+    // change next action time
+    actionTime = actionTime.plusSeconds(periodInSeconds);
+
+    // change countsLeft
+    Integer count = countsLeft--;
+    return count > 0;
+  }
+
   public ActionType getActionType() {
     return actionType;
   }

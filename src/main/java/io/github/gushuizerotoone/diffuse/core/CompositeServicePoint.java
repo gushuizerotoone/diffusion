@@ -1,9 +1,12 @@
 package io.github.gushuizerotoone.diffuse.core;
 
+import io.github.gushuizerotoone.diffuse.core.servicepoint.NextAction;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePoint;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointState;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointStatus;
 import io.github.gushuizerotoone.diffuse.spi.SagaContextRepo;
+
+import java.time.Instant;
 
 public class CompositeServicePoint implements ServicePoint {
 
@@ -39,13 +42,16 @@ public class CompositeServicePoint implements ServicePoint {
   public SagaContext normalProcess() {
     ServicePointState state = sagaContext.getServiceState(getName());
     if (state.getCurrentStatus() != ServicePointStatus.COMPLETED && state.getCurrentStatus() != ServicePointStatus.PROCESSING) {
-      state.setCurrentStatus(ServicePointStatus.PROCESSING);
-      sagaContextRepo.saveSagaContext(sagaContext);
+      NextAction nextAction = state.getNextAction();
+      if (nextAction.allowActionAndMinusCountsLeft()) {
+        state.setCurrentStatus(ServicePointStatus.PROCESSING);
+        sagaContextRepo.saveSagaContext(sagaContext);
 
-      ServicePointState servicePointState = serviceAdaptor.normalProcess(sagaContext);
-      sagaContext.setServiceState(getName(), servicePointState);
-      if (servicePointState.getCurrentStatus() != ServicePointStatus.COMPLETED) {
-        return sagaContext;
+        ServicePointState servicePointState = serviceAdaptor.normalProcess(sagaContext);
+        sagaContext.setServiceState(getName(), servicePointState);
+        if (servicePointState.getCurrentStatus() != ServicePointStatus.COMPLETED) {
+          return sagaContext;
+        }
       }
     }
 
@@ -68,12 +74,15 @@ public class CompositeServicePoint implements ServicePoint {
 
     ServicePointState state = sagaContext.getServiceState(getName());
     if (state.getCurrentStatus() != ServicePointStatus.COMPENSATED && state.getCurrentStatus() != ServicePointStatus.COMPENSATING) {
-      state.setCurrentStatus(ServicePointStatus.PREPARE_COMPENSATE);
-      state.setCurrentStatus(ServicePointStatus.COMPENSATING);
-      sagaContextRepo.saveSagaContext(sagaContext);
+      NextAction nextAction = state.getNextAction();
+      if (nextAction.allowActionAndMinusCountsLeft()) {
+        state.setCurrentStatus(ServicePointStatus.PREPARE_COMPENSATE);
+        state.setCurrentStatus(ServicePointStatus.COMPENSATING);
+        sagaContextRepo.saveSagaContext(sagaContext);
 
-      ServicePointState servicePointState = serviceAdaptor.compensate(sagaContext);
-      sagaContext.setServiceState(getName(), servicePointState);
+        ServicePointState servicePointState = serviceAdaptor.compensate(sagaContext);
+        sagaContext.setServiceState(getName(), servicePointState);
+      }
     }
 
     return sagaContext;
