@@ -38,6 +38,7 @@ public class Saga implements Redoable<Saga> {
       return sagaStatus;
     } catch (Exception e) {
       e.printStackTrace(); // TODO, replace by log
+      sagaScheduler.immediatelyRedo(sagaContext.getSagaId());
       return normalizeStatus();
     }
   }

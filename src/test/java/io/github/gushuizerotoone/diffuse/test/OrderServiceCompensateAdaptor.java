@@ -2,7 +2,8 @@ package io.github.gushuizerotoone.diffuse.test;
 
 import io.github.gushuizerotoone.diffuse.core.SagaContext;
 import io.github.gushuizerotoone.diffuse.core.ServiceAdaptor;
-import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointAction;
+import io.github.gushuizerotoone.diffuse.core.servicepoint.ActionType;
+import io.github.gushuizerotoone.diffuse.core.servicepoint.NextAction;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointState;
 import io.github.gushuizerotoone.diffuse.core.servicepoint.ServicePointStatus;
 
@@ -18,9 +19,7 @@ public class OrderServiceCompensateAdaptor implements ServiceAdaptor {
     map.put("status", "SUCCESS");
 
     ServicePointState serviceState = sagaContext.getServiceState(getName());
-    serviceState.getCurrentStatus().toPrepareCompensate(); // PrepareCompensate
-    serviceState.setServicePointAction(ServicePointAction.DEPEND_ON_POLICY);
-    serviceState.fillContent(map);
+    serviceState.fillData(ServicePointStatus.COMPENSATED, new NextAction(ActionType.TO_COMPENSATE), map);
     return serviceState;
   }
 
@@ -31,8 +30,7 @@ public class OrderServiceCompensateAdaptor implements ServiceAdaptor {
     map.put("status", "SUCCESS");
 
     ServicePointState serviceState = sagaContext.getServiceState(getName());
-    serviceState.getCurrentStatus().toCompensated();
-    serviceState.fillContent(map);
+    serviceState.fillData(ServicePointStatus.COMPENSATED, new NextAction(ActionType.ROUTINE), map);
     return serviceState;
   }
 

@@ -71,7 +71,7 @@ public class SagaContext {
 
     Map<ServicePointStatus, Integer> serviceStatusCount = serviceStates.values()
             .stream()
-            .collect(Collectors.toMap(s -> s.getStatus(), s -> 1, (v1, v2) -> v1 + v2));
+            .collect(Collectors.toMap(s -> s.getCurrentStatus(), s -> 1, (v1, v2) -> v1 + v2));
 
     if (serviceStatusCount.getOrDefault(ServicePointStatus.COMPENSATING, 0) > 0 || serviceStatusCount.getOrDefault(ServicePointStatus.PREPARE_COMPENSATE, 0) > 0) {
       return setAndGetSagaStatus(SagaStatus.COMPENSATING);

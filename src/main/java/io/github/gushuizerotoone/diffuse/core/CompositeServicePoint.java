@@ -38,13 +38,13 @@ public class CompositeServicePoint implements ServicePoint {
   @Override
   public SagaContext normalProcess() {
     ServicePointState state = sagaContext.getServiceState(getName());
-    if (state.getStatus() != ServicePointStatus.COMPLETED && state.getStatus() != ServicePointStatus.PROCESSING) {
-      state.getCurrentStatus().toProcessing();
+    if (state.getCurrentStatus() != ServicePointStatus.COMPLETED && state.getCurrentStatus() != ServicePointStatus.PROCESSING) {
+      state.setCurrentStatus(ServicePointStatus.PROCESSING);
       sagaContextRepo.saveSagaContext(sagaContext);
 
       ServicePointState servicePointState = serviceAdaptor.normalProcess(sagaContext);
       sagaContext.setServiceState(getName(), servicePointState);
-      if (servicePointState.getStatus() != ServicePointStatus.COMPLETED) {
+      if (servicePointState.getCurrentStatus() != ServicePointStatus.COMPLETED) {
         return sagaContext;
       }
     }
@@ -61,15 +61,15 @@ public class CompositeServicePoint implements ServicePoint {
     if (!isLeaf()) {
       nextServicePoint.compensate();
       ServicePointState nextServicePointState = sagaContext.getServiceState(nextServicePoint.getName());
-      if (nextServicePointState.getStatus() != ServicePointStatus.COMPENSATED) {
+      if (nextServicePointState.getCurrentStatus() != ServicePointStatus.COMPENSATED) {
         return sagaContext;
       }
     }
 
     ServicePointState state = sagaContext.getServiceState(getName());
-    if (state.getStatus() != ServicePointStatus.COMPENSATED && state.getStatus() != ServicePointStatus.COMPENSATING) {
-      state.getCurrentStatus().toPrepareCompensate();
-      state.getCurrentStatus().toCompensating();
+    if (state.getCurrentStatus() != ServicePointStatus.COMPENSATED && state.getCurrentStatus() != ServicePointStatus.COMPENSATING) {
+      state.setCurrentStatus(ServicePointStatus.PREPARE_COMPENSATE);
+      state.setCurrentStatus(ServicePointStatus.COMPENSATING);
       sagaContextRepo.saveSagaContext(sagaContext);
 
       ServicePointState servicePointState = serviceAdaptor.compensate(sagaContext);

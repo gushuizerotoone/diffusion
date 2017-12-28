@@ -12,72 +12,21 @@ public class ServicePointState {
   private Date date;
   private Map<String, Object> content;
 
-  private ServicePointStatusHolder prepareProcessStatus;
-  private ServicePointStatusHolder processingStatus;
-  private ServicePointStatusHolder completedStatus;
-  private ServicePointStatusHolder prepareCompensateStatus;
-  private ServicePointStatusHolder compensatingStatus;
-  private ServicePointStatusHolder compensatedStatus;
-
-  private ServicePointStatusHolder currentStatus;
-
-  private ServicePointAction servicePointAction;
+  private NextAction nextAction;
+  private ServicePointStatus currentStatus;
 
   public ServicePointState(Class<? extends ServiceAdaptor> serviceAdaptorClass) {
-    prepareProcessStatus = new PrepareProcessStatus(this);
-    processingStatus = new ProcessingStatus(this);
-    compensatedStatus = new CompletedStatus(this);
-    prepareCompensateStatus = new PrepareCompensateStatus(this);
-    compensatingStatus = new CompensatingStatus(this);
-    compensatedStatus= new CompensatedStatus(this);
-    completedStatus = new CompletedStatus(this);
-
-    this.currentStatus = prepareProcessStatus; // init
-
     this.className = serviceAdaptorClass.getName();
     this.date = new Date();
     this.content = new HashMap<>();
-    this.servicePointAction = ServicePointAction.DEPEND_ON_POLICY; // init
+    this.currentStatus = ServicePointStatus.PREPARE_PROCESS;
+    this.nextAction = new NextAction(ActionType.ROUTINE);
   }
 
-  public ServicePointStatus getStatus() {
-    return currentStatus.getStatus();
-  }
-
-  public void fillContent(Map<String, Object> resultParams) {
-    this.content.putAll(resultParams);
-  }
-
-  public Integer getOrder() {
-    return order;
-  }
-
-  public void setOrder(Integer order) {
-    this.order = order;
-  }
-
-  public Map<String, Object> getContent() {
-    return content;
-  }
-
-  public void setContent(Map<String, Object> content) {
-    this.content = content;
-  }
-
-  public ServicePointStatusHolder getCurrentStatus() {
-    return currentStatus;
-  }
-
-  public void setCurrentStatus(ServicePointStatusHolder currentStatus) {
+  public void fillData(ServicePointStatus currentStatus, NextAction nextAction, Map<String, Object> resultParams) {
     this.currentStatus = currentStatus;
-  }
-
-  public Date getDate() {
-    return date;
-  }
-
-  public void setDate(Date date) {
-    this.date = date;
+    this.nextAction = nextAction;
+    this.content.putAll(resultParams);
   }
 
   public String getClassName() {
@@ -88,71 +37,55 @@ public class ServicePointState {
     this.className = className;
   }
 
-  public ServicePointStatusHolder getPrepareProcessStatus() {
-    return prepareProcessStatus;
+  public Integer getOrder() {
+    return order;
   }
 
-  public void setPrepareProcessStatus(ServicePointStatusHolder prepareProcessStatus) {
-    this.prepareProcessStatus = prepareProcessStatus;
+  public void setOrder(Integer order) {
+    this.order = order;
   }
 
-  public ServicePointStatusHolder getProcessingStatus() {
-    return processingStatus;
+  public Date getDate() {
+    return date;
   }
 
-  public void setProcessingStatus(ServicePointStatusHolder processingStatus) {
-    this.processingStatus = processingStatus;
+  public void setDate(Date date) {
+    this.date = date;
   }
 
-  public ServicePointStatusHolder getCompletedStatus() {
-    return completedStatus;
+  public Map<String, Object> getContent() {
+    return content;
   }
 
-  public void setCompletedStatus(ServicePointStatusHolder completedStatus) {
-    this.completedStatus = completedStatus;
+  public void setContent(Map<String, Object> content) {
+    this.content = content;
   }
 
-  public ServicePointStatusHolder getPrepareCompensateStatus() {
-    return prepareCompensateStatus;
+  public NextAction getNextAction() {
+    return nextAction;
   }
 
-  public void setPrepareCompensateStatus(ServicePointStatusHolder prepareCompensateStatus) {
-    this.prepareCompensateStatus = prepareCompensateStatus;
+  public void setNextAction(NextAction nextAction) {
+    this.nextAction = nextAction;
   }
 
-  public ServicePointStatusHolder getCompensatingStatus() {
-    return compensatingStatus;
+  public ServicePointStatus getCurrentStatus() {
+    return currentStatus;
   }
 
-  public void setCompensatingStatus(ServicePointStatusHolder compensatingStatus) {
-    this.compensatingStatus = compensatingStatus;
-  }
-
-  public ServicePointStatusHolder getCompensatedStatus() {
-    return compensatedStatus;
-  }
-
-  public void setCompensatedStatus(ServicePointStatusHolder compensatedStatus) {
-    this.compensatedStatus = compensatedStatus;
-  }
-
-  public ServicePointAction getServicePointAction() {
-    return servicePointAction;
-  }
-
-  public void setServicePointAction(ServicePointAction servicePointAction) {
-    this.servicePointAction = servicePointAction;
+  public void setCurrentStatus(ServicePointStatus currentStatus) {
+    this.currentStatus = currentStatus;
   }
 
   @Override
   public String toString() {
-    final StringBuffer sb = new StringBuffer("{");
+    final StringBuilder sb = new StringBuilder("{");
     sb.append("className='").append(className).append('\'');
-    sb.append(", currentStatus=").append(currentStatus.getStatus());
-    sb.append(", servicePointAction=").append(servicePointAction);
+    sb.append(", currentStatus=").append(currentStatus);
     sb.append(", order=").append(order);
-//    sb.append(", date=").append(date); // TODO
+    sb.append(", date=").append(date);
     sb.append(", content=").append(content);
+    sb.append(", nextAction=").append(nextAction);
     sb.append('}');
     return sb.toString();
   }
