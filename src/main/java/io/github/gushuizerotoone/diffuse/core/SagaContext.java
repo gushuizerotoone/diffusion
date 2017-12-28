@@ -150,10 +150,23 @@ public class SagaContext {
     final StringBuffer sb = new StringBuffer("SagaContext{");
     sb.append("sagaId=").append(sagaId).append('\n');
     sb.append(", name=").append(name).append('\n');
+    sb.append(", sagaStatus=").append(sagaStatus).append('\n');
     sb.append(", lastModifyDate=").append(lastModifyDate).append('\n');
     sb.append(", sagaBaseMap=").append(sagaBaseMap).append('\n');
     sb.append(", serviceStates=").append(serviceStates);
     sb.append('}');
     return sb.toString();
+  }
+
+  public boolean isRedoNow() {
+    return false; // TODO
+  }
+
+  public boolean isRedoLater() {
+    return false; // TODO
+  }
+
+  public Long getRedoDelay() {
+    return 0l;  // TODO
   }
 }

@@ -4,9 +4,9 @@ import java.time.Instant;
 
 public class NextAction {
   private ActionType actionType;
-  private Integer countsLeft;
-  private Instant instant;
-  private Long periodInSeconds;
+  private Integer countsLeft = 3; // default retry times
+  private Instant actionTime = Instant.now(); // default happen time
+  private Long periodInSeconds = 30l; // default period
 
   public NextAction(ActionType actionType) {
     this.actionType = actionType;
@@ -28,12 +28,12 @@ public class NextAction {
     this.countsLeft = countsLeft;
   }
 
-  public Instant getInstant() {
-    return instant;
+  public Instant getActionTime() {
+    return actionTime;
   }
 
-  public void setInstant(Instant instant) {
-    this.instant = instant;
+  public void setActionTime(Instant actionTime) {
+    this.actionTime = actionTime;
   }
 
   public Long getPeriodInSeconds() {
@@ -49,7 +49,7 @@ public class NextAction {
     final StringBuilder sb = new StringBuilder("{");
     sb.append("actionType=").append(actionType);
     sb.append(", countsLeft=").append(countsLeft);
-    sb.append(", instant=").append(instant);
+    sb.append(", actionTime=").append(actionTime);
     sb.append(", periodInSeconds=").append(periodInSeconds);
     sb.append('}');
     return sb.toString();

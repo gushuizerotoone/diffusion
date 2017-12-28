@@ -27,29 +27,29 @@ public class Saga implements Redoable<Saga> {
   public SagaStatus process() {
     try {
       firstServicePoint.normalProcess();
-      SagaStatus sagaStatus = normalizeStatus();
+      SagaStatus sagaStatus = sagaContext.normalizeSagaStatus();
 
       // if not COMPLETED, will retry or compensate
       if (sagaStatus != SagaStatus.COMPLETED) {
-        sagaScheduler.immediatelyRedo(sagaContext.getSagaId());
-        return normalizeStatus();
+        return redoAndGetStatus();
       }
 
       return sagaStatus;
     } catch (Exception e) {
       e.printStackTrace(); // TODO, replace by log
-      sagaScheduler.immediatelyRedo(sagaContext.getSagaId());
-      return normalizeStatus();
+      return redoAndGetStatus();
     }
+  }
+
+  private SagaStatus redoAndGetStatus() {
+    Saga saga = sagaScheduler.schedulerRedo(sagaContext.getSagaId());
+    return saga.getSagaContext().normalizeSagaStatus();
   }
 
   public SagaContext getSagaContext() {
     return sagaContext;
   }
 
-  public SagaStatus normalizeStatus() {
-    return sagaContext.normalizeSagaStatus();
-  }
 
   @Override
   public Saga redo() {
